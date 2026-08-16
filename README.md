@@ -149,7 +149,3 @@ Algumas evoluções naturais para o projeto são:
 - testes automatizados para controller, service e repository;
 - interface com melhor experiência para o usuário;
 - métricas de acesso e gerenciamento dos links.
-
-## Licença
-
-Projeto em desenvolvimento. Adicione aqui a licença desejada quando aplicável.
