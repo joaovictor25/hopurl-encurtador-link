@@ -47,10 +47,8 @@ public class LinkService {
     }
 
     private static String converterBase62(BigInteger numero) {
-
         StringBuilder resultado = new StringBuilder();
         BigInteger base = BigInteger.valueOf(62);
-
         while (numero.compareTo(BigInteger.ZERO) > 0) {
 
             BigInteger[] divisao = numero.divideAndRemainder(base);
@@ -65,17 +63,10 @@ public class LinkService {
         return resultado.reverse().toString();
     }
 
+    public String buscarUrlOriginal(String code){
+        Link link = repository.findByCode(code);
+        return link.getUrlOriginal();
+    }
 
 
-
-
-
-
-
-
-
-//    public String gerarCode(String urlOriginal){
-//
-//        return urlOriginal+"CODE";
-//    }
 }
