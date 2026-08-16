@@ -19,11 +19,10 @@ public class LinkController {
 
     @PostMapping("/api/links")
     public String encurtarLink(@RequestBody Link url){
-        linkService.encurtarLink(url);
-        return "";
+        return linkService.encurtarLink(url);
     }
 
-    @GetMapping("/{code}")
+    @GetMapping("/{code:[a-zA-Z0-9]+}")
     public ResponseEntity<Void> buscarUrlOriginal(@PathVariable String code) {
         String urlOriginal = linkService.buscarUrlOriginal(code);
 

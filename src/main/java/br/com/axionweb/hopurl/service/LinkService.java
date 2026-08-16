@@ -23,7 +23,7 @@ public class LinkService {
         String codeGerado = gerarCode(url.getUrlOriginal());
         url.setCode(codeGerado);
         repository.saveAndFlush(url);
-        return "";
+        return "localhost:8080/"+url.getCode();
     }
 
     public static String gerarCode(String url) {

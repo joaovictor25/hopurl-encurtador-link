@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>HopURL - Encurtador de Links</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .descricao {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #333;
+        }
+
+        button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: #111;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #333;
+        }
+
+        .resultado {
+            display: none;
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f2f2f2;
+            border-radius: 8px;
+        }
+
+        .resultado p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .url-gerada {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .url-gerada a {
+            color: #0066cc;
+            text-decoration: none;
+            overflow-wrap: anywhere;
+        }
+
+        .copiar {
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+
+        .erro {
+            display: none;
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #ffe5e5;
+            color: #c62828;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px;
+                padding: 25px;
+            }
+
+            form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>HopURL</h1>
+
+    <p class="descricao">
+        Cole sua URL abaixo para gerar um link encurtado.
+    </p>
+
+    <form id="formLink">
+
+        <input
+                type="url"
+                id="urlOriginal"
+                placeholder="https://exemplo.com/pagina"
+                required
+        >
+
+        <button type="submit">
+            Encurtar
+        </button>
+
+    </form>
+
+    <div class="resultado" id="resultado">
+
+        <p>Seu novo link:</p>
+
+        <div class="url-gerada">
+
+            <a
+                    id="novaUrl"
+                    href="#"
+                    target="_blank">
+            </a>
+
+            <button
+                    class="copiar"
+                    id="btnCopiar"
+                    type="button">
+                Copiar
+            </button>
+
+        </div>
+
+    </div>
+
+    <div
+            class="erro"
+            id="erro">
+    </div>
+
+</div>
+
+<script>
+    const form = document.getElementById("formLink");
+    const inputUrl = document.getElementById("urlOriginal");
+
+    const resultado = document.getElementById("resultado");
+    const novaUrl = document.getElementById("novaUrl");
+
+    const erro = document.getElementById("erro");
+    const btnCopiar = document.getElementById("btnCopiar");
+
+    form.addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        resultado.style.display = "none";
+        erro.style.display = "none";
+
+        const url = inputUrl.value.trim();
+
+        if (!validarUrl(url)) {
+            mostrarErro("Informe uma URL válida começando com http:// ou https://");
+            return;
+        }
+
+        const objeto = {
+            urlOriginal: url
+        };
+
+        try {
+            const response = await fetch(
+                "/api/links",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(objeto)
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Erro ao criar o link. Status: " + response.status
+                );
+            }
+
+            const urlEncurtada = await response.text();
+
+            novaUrl.textContent = urlEncurtada;
+            novaUrl.href = urlEncurtada;
+
+            resultado.style.display = "block";
+
+        } catch (error) {
+            console.error(error);
+            mostrarErro("Não foi possível conectar com o servidor.");
+        }
+    });
+
+    function validarUrl(valor) {
+        try {
+            const url = new URL(valor);
+
+            return (
+                url.protocol === "http:" ||
+                url.protocol === "https:"
+            );
+        } catch {
+            return false;
+        }
+    }
+
+    function mostrarErro(mensagem) {
+        erro.textContent = mensagem;
+        erro.style.display = "block";
+    }
+
+    btnCopiar.addEventListener("click", async function() {
+        const texto = novaUrl.textContent;
+
+        await navigator.clipboard.writeText(texto);
+
+        btnCopiar.textContent = "Copiado!";
+
+        setTimeout(function() {
+            btnCopiar.textContent = "Copiar";
+        }, 1500);
+    });
+</script>
+
+</body>
+</html>
