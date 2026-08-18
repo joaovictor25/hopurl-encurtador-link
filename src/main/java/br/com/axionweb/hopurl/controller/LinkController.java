@@ -18,8 +18,12 @@ public class LinkController {
 
 
     @PostMapping("/api/links")
-    public String encurtarLink(@RequestBody Link url){
-        return linkService.encurtarLink(url);
+    public ResponseEntity<String> encurtarLink(@RequestBody Link url) {
+        String shortUrl = linkService.encurtarLink(url);
+
+        return ResponseEntity
+                .created(URI.create(shortUrl))
+                .body(shortUrl);
     }
 
     @GetMapping("/{code:[a-zA-Z0-9]+}")
