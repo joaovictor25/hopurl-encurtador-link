@@ -2,6 +2,9 @@
 
 HopURL é um encurtador de links desenvolvido com Spring Boot. O projeto está em desenvolvimento, porém já permite gerar URLs encurtadas e redirecionar para o endereço original por meio do código criado.
 
+## Demostração
+<img src="https://www.axionweb.com.br/gif-hopurl-tela.gif" width="35" title="HopUrl"/>
+
 ## Visão Geral
 
 O sistema recebe uma URL original, gera um identificador curto baseado em hash e armazena o relacionamento em banco de dados. Depois disso, o link encurtado pode ser acessado diretamente para redirecionamento.
